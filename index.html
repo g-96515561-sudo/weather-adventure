@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEATHER ADVENTURE - Year 3 Special Education (Intermediate)</title>
+    
+    <!-- Tailwind CSS for utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for friendly, legible typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .font-heading {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-gentle {
+            animation: bounce-gentle 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-star {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+        .animate-star {
+            animation: pulse-star 1s ease-in-out infinite;
+        }
+
+        @keyframes float-cloud {
+            0% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(-10px); }
+        }
+        .animate-cloud {
+            animation: float-cloud 4s ease-in-out infinite;
+        }
+
+        .btn-kid {
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+        }
+        .btn-kid:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .card-selectable {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 3px solid #cbd5e1;
+        }
+        .card-selectable:hover, .card-selectable:focus {
+            transform: scale(1.02);
+            border-color: #38bdf8;
+        }
+        .card-selected {
+            border-color: #f59e0b !important;
+            background-color: #fef3c7 !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+        }
+
+        .card-correct {
+            border-color: #22c55e !important;
+            background-color: #dcfce7 !important;
+            color: #14532d !important;
+        }
+
+        .card-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden text-slate-800">
+
+    <header class="bg-white/95 backdrop-blur border-b-4 border-sky-300 px-4 py-3 sticky top-0 z-40 shadow-md">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+            <!-- Mascot & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-amber-300 border-2 border-amber-400 flex items-center justify-center text-2xl shadow animate-bounce-gentle flex-shrink-0">
+                    ☀️
+                </div>
+                <div>
+                    <h1 class="font-heading text-xl md:text-2xl text-sky-600 tracking-wide leading-none">WEATHER ADVENTURE</h1>
+                    <p class="text-xs text-sky-500 font-semibold hidden sm:block">Year 3 SEN English • Intermediate Level 🇲🇾</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Level Indicator -->
+                <div class="bg-sky-100 border-2 border-sky-300 px-2.5 py-1 rounded-full text-sky-800 font-bold text-xs md:text-sm">
+                    <span id="level-badge-text">Level 1/5</span>
+                </div>
+
+                <!-- Stars Counter -->
+                <div class="flex items-center gap-1.5 bg-amber-100 border-2 border-amber-300 px-2.5 py-1 rounded-full text-amber-700 font-bold text-sm md:text-base shadow-inner">
+                    <i class="fa-solid fa-star text-amber-400 text-base animate-star"></i>
+                    <span id="star-count" class="font-heading">0</span>
+                </div>
+
+                <!-- BM Translation Toggle -->
+                <button id="btn-bm-toggle" onclick="toggleBM()" class="h-9 px-2.5 rounded-full bg-indigo-100 border-2 border-indigo-300 text-indigo-700 font-bold text-xs flex items-center gap-1 hover:bg-indigo-200 transition" title="Toggle Bahasa Melayu Translation">
+                    <i class="fa-solid fa-language text-sm"></i>
+                    <span id="bm-toggle-text">BM: OFF</span>
+                </button>
+
+                <!-- Speech Audio Toggle -->
+                <button id="btn-sound-toggle" onclick="toggleSound()" class="w-9 h-9 rounded-full bg-sky-100 border-2 border-sky-300 text-sky-600 flex items-center justify-center text-base hover:bg-sky-200 transition" title="Toggle Sound">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="max-w-4xl mx-auto mt-2 bg-slate-200 h-3.5 rounded-full overflow-hidden border border-slate-300">
+            <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-green-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-3 md:p-6 max-w-4xl mx-auto w-full">
+
+        <section id="screen-start" class="w-full text-center bg-white/95 backdrop-blur rounded-3xl p-6 md:p-10 border-4 border-sky-300 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-200 rounded-full opacity-50 animate-cloud"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-sky-200 rounded-full opacity-50 animate-cloud"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto">
+                <div class="inline-block bg-sky-100 text-sky-700 px-4 py-1 rounded-full text-xs md:text-sm font-bold mb-3 border border-sky-300">
+                    🇲🇾 Bahasa Inggeris Pendidikan Khas (Tahun 3)
+                </div>
+
+                <!-- Cute SVG Sun Mascot -->
+                <div class="w-32 h-32 mx-auto mb-3 relative">
+                    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+                        <circle cx="50" cy="50" r="30" fill="#FCD34D" stroke="#F59E0B" stroke-width="3"/>
+                        <g stroke="#F59E0B" stroke-width="4" stroke-linecap="round">
+                            <line x1="50" y1="10" x2="50" y2="2" />
+                            <line x1="50" y1="90" x2="50" y2="98" />
+                            <line x1="10" y1="50" x2="2" y2="50" />
+                            <line x1="90" y1="50" x2="98" y2="50" />
+                            <line x1="22" y1="22" x2="16" y2="16" />
+                            <line x1="78" y1="78" x2="84" y2="84" />
+                            <line x1="22" y1="78" x2="16" y2="84" />
+                            <line x1="78" y1="22" x2="84" y2="16" />
+                        </g>
+                        <circle cx="42" cy="45" r="4" fill="#1E293B"/>
+                        <circle cx="58" cy="45" r="4" fill="#1E293B"/>
+                        <circle cx="43" cy="43" r="1.5" fill="#FFFFFF"/>
+                        <circle cx="59" cy="43" r="1.5" fill="#FFFFFF"/>
+                        <circle cx="36" cy="52" r="3" fill="#F87171" opacity="0.6"/>
+                        <circle cx="64" cy="52" r="3" fill="#F87171" opacity="0.6"/>
+                        <path d="M 40 55 Q 50 65 60 55" fill="none" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <h2 class="font-heading text-3xl md:text-5xl text-sky-600 mb-1">WEATHER ADVENTURE</h2>
+                <p id="start-desc-bm" class="text-xs md:text-sm text-indigo-600 font-semibold mb-3 hidden">
+                    Pengembaraan Cuaca Bahasa Inggeris • Terjemahan & Petunjuk Disediakan! 🌐
+                </p>
+                <p class="text-base md:text-lg text-slate-600 font-semibold mb-4">Read simple English sentences & solve 5 weather challenges!</p>
+
+                <!-- Features list -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6 text-xs md:text-sm text-sky-800 font-bold">
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">🔍 Weather Detective</div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">💡 Think & Choose</div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">👕 Clothes & Reason</div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">📜 Forecast Challenge</div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">❌ Find the Mistake</div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2">🔊 Read Aloud & Hints</div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-2 mb-5">
+                    <button onclick="speakText('Welcome to Weather Adventure Intermediate! Read the sentences carefully or tap the speaker buttons to listen!')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-4 py-2 rounded-full border-2 border-amber-300 inline-flex items-center gap-2 transition text-xs md:text-sm">
+                        <i class="fa-solid fa-volume-high text-amber-600 text-base"></i>
+                        <span>Listen to Instructions 🔊</span>
+                    </button>
+                    <button onclick="toggleBM()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold px-4 py-2 rounded-full border-2 border-indigo-300 inline-flex items-center gap-2 transition text-xs md:text-sm">
+                        <i class="fa-solid fa-language text-indigo-600 text-base"></i>
+                        <span id="start-bm-btn-label">BM Translation: OFF 🌐</span>
+                    </button>
+                </div>
+
+                <div>
+                    <button onclick="startGame()" class="btn-kid w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 text-white font-heading text-2xl py-4 px-8 rounded-3xl border-b-8 border-emerald-700 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 mx-auto">
+                        <i class="fa-solid fa-play text-2xl"></i>
+                        <span>START GAME</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-game-1" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-4 md:p-8 border-4 border-sky-300 shadow-2xl">
+            <div class="text-center mb-4">
+                <div class="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-1">
+                    Level 1 • Weather Detective
+                </div>
+                <h2 class="font-heading text-2xl md:text-3xl text-sky-700">Read & Identify Weather</h2>
+                <p id="g1-sub-bm" class="text-xs text-indigo-600 font-medium hidden">Baca klu dan pilih cuaca yang betul!</p>
+                <p class="text-slate-600 text-sm md:text-base">Read the clue carefully and choose the correct weather!</p>
+            </div>
+
+            <!-- Clue Card Box -->
+            <div class="bg-amber-50 border-3 border-amber-300 rounded-2xl p-4 max-w-xl mx-auto mb-5 shadow-sm relative">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">🔍 Clue <span id="g1-qnum">1/3</span>:</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                        <button onclick="speakCurrentClue()" class="text-amber-800 bg-amber-300 hover:bg-amber-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 transition">
+                            <i class="fa-solid fa-volume-high"></i> Read Clue 🔊
+                        </button>
+                    </div>
+                </div>
+                <p id="g1-clue-text" class="text-lg md:text-xl font-bold text-slate-800 leading-snug">
+                    <!-- Dynamic Clue Text -->
+                </p>
+                <p id="g1-clue-bm" class="text-xs md:text-sm font-semibold text-indigo-700 italic border-t border-amber-200 pt-1.5 mt-2 hidden">
+                    <!-- Dynamic BM Translation -->
+                </p>
+            </div>
+
+            <!-- 4 Answer Choices Grid -->
+            <div id="g1-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
+                <!-- Dynamically Populated Options -->
+            </div>
+        </section>
+
+        <section id="screen-game-2" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-4 md:p-8 border-4 border-sky-300 shadow-2xl">
+            <div class="text-center mb-4">
+                <div class="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-1">
+                    Level 2 • Think and Choose
+                </div>
+                <h2 class="font-heading text-2xl md:text-3xl text-sky-700">Scenario Decision</h2>
+                <p id="g2-sub-bm" class="text-xs text-indigo-600 font-medium hidden">Apakah yang patut anda bawa atau lakukan? Fikir dengan bijak!</p>
+                <p class="text-slate-600 text-sm md:text-base">What should you bring or do? Think logically!</p>
+            </div>
+
+            <!-- Scenario Card -->
+            <div class="bg-sky-50 border-3 border-sky-300 rounded-2xl p-4 max-w-xl mx-auto mb-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-sky-800 uppercase tracking-wide">💡 Scenario <span id="g2-qnum">1/3</span>:</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                        <button onclick="speakCurrentScenario()" class="text-sky-800 bg-sky-300 hover:bg-sky-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 transition">
+                            <i class="fa-solid fa-volume-high"></i> Read Scenario 🔊
+                        </button>
+                    </div>
+                </div>
+                <p id="g2-scenario-text" class="text-base md:text-lg font-semibold text-slate-800 leading-snug">
+                    <!-- Dynamic Scenario Text -->
+                </p>
+                <p id="g2-scenario-bm" class="text-xs md:text-sm font-semibold text-indigo-700 italic border-t border-sky-200 pt-1.5 mt-2 hidden">
+                    <!-- Dynamic BM Translation -->
+                </p>
+            </div>
+
+            <!-- 4 Answer Options Grid -->
+            <div id="g2-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
+                <!-- Dynamically Populated Options -->
+            </div>
+        </section>
+
+        <section id="screen-game-3" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-4 md:p-6 border-4 border-sky-300 shadow-2xl">
+            <div class="text-center mb-3">
+                <div class="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-1">
+                    Level 3 • Dress & Explain
+                </div>
+                <h2 id="g3-title" class="font-heading text-2xl md:text-3xl text-sky-700">Dress for the Weather</h2>
+                <p id="g3-title-bm" class="text-xs text-indigo-600 font-semibold hidden">Pilih pakaian yang sesuai dan jelaskan jawapan anda!</p>
+                <p id="g3-subtitle" class="text-slate-600 text-xs md:text-sm font-medium">Pick suitable clothes AND explain WHY!</p>
+            </div>
+
+            <div id="g3-step-dress" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                <!-- Left: Avatar Frame -->
+                <div class="md:col-span-5 bg-sky-50 border-3 border-sky-200 rounded-2xl p-3 flex flex-col items-center justify-center min-h-[220px]">
+                    <div id="g3-weather-icon" class="text-5xl mb-1 animate-bounce-gentle">☀️</div>
+                    <div id="g3-weather-label" class="font-heading text-lg text-sky-800 mb-1">Sunny Weather</div>
+                    <div id="g3-weather-label-bm" class="text-xs text-indigo-700 font-semibold italic mb-2 hidden">Cuaca Panas</div>
+
+                    <!-- Selected Items Container -->
+                    <div class="w-full bg-white border border-sky-200 rounded-xl p-2 text-center">
+                        <span class="text-xs font-bold text-slate-500 block mb-1">Chosen Clothes:</span>
+                        <div id="g3-chosen-items" class="flex justify-center gap-2 text-2xl min-h-[36px]">
+                            <span class="text-slate-300">❓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-7">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-heading text-slate-700 text-xs md:text-sm">Tap the best outfit for this weather:</h3>
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                    </div>
+                    <div id="g3-clothes-grid" class="grid grid-cols-2 gap-2.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explanation Step (Hidden until clothes chosen) -->
+            <div id="g3-step-explain" class="hidden bg-emerald-50 border-3 border-emerald-300 rounded-2xl p-4 max-w-xl mx-auto text-center mt-2">
+                <div class="flex items-center justify-between mb-2 border-b border-emerald-200 pb-2">
+                    <span class="text-xs font-bold text-emerald-800 uppercase">❓ Explanation Question:</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                        <button onclick="speakText(document.getElementById('g3-explain-question').innerText)" class="bg-emerald-200 hover:bg-emerald-300 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                            <i class="fa-solid fa-volume-high"></i> Read 🔊
+                        </button>
+                    </div>
+                </div>
+                <p id="g3-explain-question" class="font-heading text-lg text-emerald-900 mb-1">Why do we wear this?</p>
+                <p id="g3-explain-bm" class="text-xs md:text-sm font-semibold text-indigo-700 italic mb-3 hidden">
+                    <!-- Dynamic BM Question -->
+                </p>
+                
+                <div id="g3-explain-options" class="flex flex-col gap-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-game-4" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-4 md:p-6 border-4 border-sky-300 shadow-2xl">
+            <div class="text-center mb-3">
+                <div class="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-1">
+                    Level 4 • Weather Forecast Challenge
+                </div>
+                <h2 class="font-heading text-2xl md:text-3xl text-sky-700">Read the Forecast Card</h2>
+                <p id="g4-sub-bm" class="text-xs text-indigo-600 font-semibold hidden">Baca buletin ramalan cuaca dan jawab soalan kefahaman!</p>
+                <p class="text-slate-600 text-xs md:text-sm">Read the weather report and answer the comprehension question!</p>
+            </div>
+
+            <!-- Forecast Bulletin Card -->
+            <div class="bg-gradient-to-r from-sky-50 to-indigo-50 border-3 border-sky-300 rounded-2xl p-4 max-w-xl mx-auto mb-4 shadow-sm relative">
+                <div class="flex items-center justify-between mb-2 border-b border-sky-200 pb-2">
+                    <span class="font-heading text-sm text-sky-800 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-sun text-amber-500 text-lg"></i>
+                        MALAYSIA DAILY FORECAST
+                    </span>
+                    <button onclick="speakForecastReport()" class="bg-sky-200 hover:bg-sky-300 text-sky-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 transition">
+                        <i class="fa-solid fa-volume-high"></i> Read Report 🔊
+                    </button>
+                </div>
+                <div id="g4-forecast-body" class="text-sm md:text-base text-slate-800 font-medium space-y-1">
+                    <!-- Dynamic Forecast Lines -->
+                </div>
+            </div>
+
+            <!-- Comprehension Question Box -->
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-3 max-w-xl mx-auto mb-3">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-amber-800 uppercase">Question <span id="g4-qnum">1/3</span>:</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                        <button onclick="speakText(document.getElementById('g4-question-text').innerText)" class="bg-amber-300 hover:bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                            <i class="fa-solid fa-volume-high"></i> Read Question 🔊
+                        </button>
+                    </div>
+                </div>
+                <p id="g4-question-text" class="font-heading text-base md:text-lg text-slate-800 mt-0.5">
+                    <!-- Question text -->
+                </p>
+                <p id="g4-question-bm" class="text-xs md:text-sm font-semibold text-indigo-700 italic border-t border-amber-200 pt-1 mt-1 hidden">
+                    <!-- BM Translation -->
+                </p>
+            </div>
+
+            <!-- Answer Options -->
+            <div id="g4-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-xl mx-auto">
+                <!-- Dynamic Options -->
+            </div>
+        </section>
+
+        <section id="screen-game-5" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-4 md:p-6 border-4 border-sky-300 shadow-2xl">
+            <div class="text-center mb-3">
+                <div class="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-1">
+                    Level 5 • Find the Mistake
+                </div>
+                <h2 class="font-heading text-2xl md:text-3xl text-sky-700">Spot the Wrong Action!</h2>
+                <p id="g5-sub-bm" class="text-xs text-indigo-600 font-semibold hidden">Cari kesilapan atau tindakan lucu dalam cerita!</p>
+                <p class="text-slate-600 text-xs md:text-sm">Read the story statement and pick what is wrong or silly!</p>
+            </div>
+
+            <!-- Story Card -->
+            <div class="bg-rose-50 border-3 border-rose-200 rounded-2xl p-4 max-w-xl mx-auto mb-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-rose-800 uppercase">📖 Story <span id="g5-qnum">1/3</span>:</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showHint()" class="bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                            <i class="fa-solid fa-lightbulb text-amber-600"></i> Hint 💡
+                        </button>
+                        <button onclick="speakCurrentStory()" class="bg-rose-200 hover:bg-rose-300 text-rose-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 transition">
+                            <i class="fa-solid fa-volume-high"></i> Read Story 🔊
+                        </button>
+                    </div>
+                </div>
+                <p id="g5-story-text" class="text-base md:text-lg font-semibold text-slate-800 leading-snug">
+                    <!-- Dynamic Story text -->
+                </p>
+                <p id="g5-story-bm" class="text-xs md:text-sm font-semibold text-indigo-700 italic border-t border-rose-200 pt-1.5 mt-2 hidden">
+                    <!-- BM Story -->
+                </p>
+            </div>
+
+            <p class="text-center font-heading text-slate-700 text-sm mb-2">What is wrong in this story?</p>
+
+            <div id="g5-options-container" class="flex flex-col gap-2.5 max-w-xl mx-auto">
+                <!-- Dynamic choices -->
+            </div>
+        </section>
+
+        <section id="screen-celebration" class="hidden w-full bg-white/95 backdrop-blur rounded-3xl p-6 md:p-8 border-4 border-amber-300 shadow-2xl text-center relative overflow-hidden">
+            <canvas id="confetti-canvas"></canvas>
+
+            <div class="relative z-10 max-w-xl mx-auto">
+                <div class="text-6xl md:text-7xl mb-2 animate-bounce">🏆</div>
+
+                <h2 class="font-heading text-3xl md:text-4xl text-amber-500 mb-1">TAHNIAH! EXCELLENT JOB!</h2>
+                <p class="text-base md:text-lg text-slate-600 font-bold mb-4">You completed Weather Adventure Intermediate!</p>
+
+                <!-- Performance Report Box -->
+                <div class="bg-gradient-to-r from-amber-50 to-yellow-100 border-3 border-amber-300 rounded-3xl p-4 md:p-6 mb-6 shadow-inner text-left">
+                    <h3 class="font-heading text-center text-amber-900 text-xl mb-3 border-b border-amber-200 pb-2">
+                        📊 Pupil Performance Report
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4 text-sm font-semibold">
+                        <div class="bg-white p-3 rounded-2xl border border-amber-200 flex flex-col items-center">
+                            <span class="text-xs text-slate-500 uppercase">Total Stars</span>
+                            <span class="font-heading text-2xl text-amber-500 flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400"></i>
+                                <span id="rep-stars">0</span>
+                            </span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl border border-amber-200 flex flex-col items-center">
+                            <span class="text-xs text-slate-500 uppercase">First-Try Accuracy</span>
+                            <span id="rep-accuracy" class="font-heading text-2xl text-emerald-600">100%</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 text-xs md:text-sm font-semibold text-slate-700">
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-100">
+                            <span>🔍 Weather Detective</span>
+                            <span id="rep-l1" class="text-emerald-600 font-bold">3/3 Correct</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-100">
+                            <span>💡 Think & Choose</span>
+                            <span id="rep-l2" class="text-emerald-600 font-bold">3/3 Correct</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-100">
+                            <span>👕 Dress & Reason</span>
+                            <span id="rep-l3" class="text-emerald-600 font-bold">3/3 Correct</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-100">
+                            <span>📜 Forecast Challenge</span>
+                            <span id="rep-l4" class="text-emerald-600 font-bold">3/3 Correct</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-100">
+                            <span>❌ Find the Mistake</span>
+                            <span id="rep-l5" class="text-emerald-600 font-bold">3/3 Correct</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-center bg-amber-200/60 p-2 rounded-xl text-amber-900 font-heading text-sm">
+                        🏅 Weather Master Badge Earned! 🏅
+                    </div>
+                </div>
+
+                <!-- Replay Button -->
+                <button onclick="restartGame()" class="btn-kid w-full max-w-xs bg-sky-500 hover:bg-sky-600 text-white font-heading text-xl py-3.5 px-6 rounded-3xl border-b-8 border-sky-700 transition transform hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-rotate-right text-xl"></i>
+                    <span>PLAY AGAIN</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="feedback-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+        <div id="feedback-card" class="bg-white rounded-3xl border-4 border-sky-300 p-6 max-w-md w-full shadow-2xl transform transition-transform duration-200 scale-90 text-center">
+            <div id="fb-icon" class="text-5xl mb-2">⭐</div>
+            <h3 id="fb-title" class="font-heading text-2xl text-sky-700 mb-1">Great Job!</h3>
+            
+            <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3 my-3 text-left">
+                <span class="text-xs font-bold text-sky-800 uppercase block mb-1">💡 Why is this correct?</span>
+                <p id="fb-explanation" class="text-sm font-medium text-slate-700 leading-snug">
+                    <!-- Dynamic simple English explanation -->
+                </p>
+            </div>
+
+            <button id="fb-btn-next" onclick="closeFeedbackModal()" class="btn-kid w-full bg-emerald-500 hover:bg-emerald-600 text-white font-heading text-lg py-3 rounded-2xl border-b-4 border-emerald-700">
+                CONTINUE ➔
+            </button>
+        </div>
+    </div>
+
+    <div id="hint-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-3xl border-4 border-amber-300 p-6 max-w-md w-full shadow-2xl text-center transform transition-all duration-200 scale-95">
+            <div class="w-14 h-14 mx-auto mb-2 bg-amber-100 rounded-full flex items-center justify-center text-3xl text-amber-500 border-2 border-amber-300">
+                💡
+            </div>
+            <h3 class="font-heading text-2xl text-amber-700 mb-2">Need a Hint? / Petunjuk</h3>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left space-y-2 mb-4">
+                <div>
+                    <span class="text-xs font-bold text-amber-800 uppercase block mb-0.5">🇬🇧 English Hint:</span>
+                    <p id="hint-text-en" class="text-sm md:text-base font-semibold text-slate-800">
+                        <!-- EN Hint -->
+                    </p>
+                </div>
+                <div class="border-t border-amber-200 pt-2">
+                    <span class="text-xs font-bold text-amber-800 uppercase block mb-0.5">🇲🇾 Petunjuk (BM):</span>
+                    <p id="hint-text-bm" class="text-sm md:text-base font-semibold text-indigo-800 italic">
+                        <!-- BM Hint -->
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="speakText(document.getElementById('hint-text-en').innerText)" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold py-2.5 px-3 rounded-xl border border-amber-300 text-xs flex items-center justify-center gap-1 transition">
+                    <i class="fa-solid fa-volume-high"></i> Read Hint 🔊
+                </button>
+                <button onclick="closeHintModal()" class="flex-1 btn-kid bg-emerald-500 hover:bg-emerald-600 text-white font-heading text-sm py-2.5 px-4 rounded-xl border-b-4 border-emerald-700 transition">
+                    Got It! 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-2.5 text-sky-700 font-medium text-xs bg-white/60 backdrop-blur border-t border-sky-200">
+        <p>Year 3 Special Education English Module • Weather Adventure Intermediate 🇲🇾</p>
+    </footer>
+
+    <script>
+        let state = {
+            stars: 0,
+            soundEnabled: true,
+            showBm: false,
+            currentLevel: 1,
+            currentQuestionIndex: 0,
+            firstTryCorrectCount: 0,
+            totalQuestionsAttempted: 0,
+            levelScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+            isFirstAttempt: true,
+            pendingNextAction: null
+        };
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function unlockAudio() {
+            getAudioContext();
+        }
+        document.addEventListener('touchstart', unlockAudio, { once: false });
+        document.addEventListener('click', unlockAudio, { once: false });
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.2);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.25);
+                    });
+                } else if (type === 'wrong') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'click') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'fanfare') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50, 880, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        const duration = idx === 5 ? 0.6 : 0.15;
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + duration);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.15);
+                        osc.stop(now + idx * 0.15 + duration + 0.05);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio error:", e);
+            }
+        }
+
+        function speakText(text) {
+            if (!state.soundEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const cleanText = text.replace(/[\u{1F300}-\u{1F9FF}]/gu, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = 0.85;
+                utterance.pitch = 1.05;
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (state.soundEnabled) {
+                if (icon) icon.className = 'fa-solid fa-volume-high';
+                speakText("Sound turned on.");
+            } else {
+                if (icon) icon.className = 'fa-solid fa-volume-xmark';
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function toggleBM() {
+            playSound('click');
+            state.showBm = !state.showBm;
+            
+            const btnText = document.getElementById('bm-toggle-text');
+            const startBmLabel = document.getElementById('start-bm-btn-label');
+            const startBmDesc = document.getElementById('start-desc-bm');
+
+            if (state.showBm) {
+                if (btnText) btnText.innerText = 'BM: ON';
+                if (startBmLabel) startBmLabel.innerText = 'BM Translation: ON 🌐';
+                if (startBmDesc) startBmDesc.classList.remove('hidden');
+            } else {
+                if (btnText) btnText.innerText = 'BM: OFF';
+                if (startBmLabel) startBmLabel.innerText = 'BM Translation: OFF 🌐';
+                if (startBmDesc) startBmDesc.classList.add('hidden');
+            }
+
+            refreshCurrentLevelUI();
+        }
+
+        function showScreen(screenId) {
+            const screens = ['screen-start', 'screen-game-1', 'screen-game-2', 'screen-game-3', 'screen-game-4', 'screen-game-5', 'screen-celebration'];
+            screens.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) {
+                    if (s === screenId) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function updateProgressUI() {
+            const badge = document.getElementById('level-badge-text');
+            if (badge) badge.innerText = `Level ${state.currentLevel}/5`;
+
+            const totalQ = 15;
+            const currentQ = (state.currentLevel - 1) * 3 + state.currentQuestionIndex;
+            const pct = Math.min(100, Math.round((currentQ / totalQ) * 100));
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) progressBar.style.width = `${pct}%`;
+        }
+
+        function addStars(amount) {
+            state.stars += amount;
+            const starEl = document.getElementById('star-count');
+            if (starEl) starEl.innerText = state.stars;
+        }
+
+        function startGame() {
+            playSound('click');
+            state.stars = 0;
+            state.firstTryCorrectCount = 0;
+            state.levelScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            const starEl = document.getElementById('star-count');
+            if (starEl) starEl.innerText = '0';
+            initLevel1();
+        }
+
+        function showFeedback(isCorrect, title, explanation, nextCallback) {
+            playSound(isCorrect ? 'correct' : 'wrong');
+
+            state.pendingNextAction = nextCallback;
+
+            const modal = document.getElementById('feedback-modal');
+            const card = document.getElementById('feedback-card');
+            const fbIcon = document.getElementById('fb-icon');
+            const fbTitle = document.getElementById('fb-title');
+            const fbExpl = document.getElementById('fb-explanation');
+            const fbBtn = document.getElementById('fb-btn-next');
+
+            if (fbIcon) fbIcon.innerText = isCorrect ? '🌟' : '💡';
+            if (fbTitle) {
+                fbTitle.innerText = title;
+                fbTitle.className = `font-heading text-2xl mb-1 ${isCorrect ? 'text-emerald-600' : 'text-amber-600'}`;
+            }
+            if (fbExpl) fbExpl.innerText = explanation;
+            if (fbBtn) {
+                fbBtn.innerText = isCorrect ? 'CONTINUE ➔' : 'TRY AGAIN 🔄';
+                fbBtn.className = isCorrect 
+                    ? 'btn-kid w-full bg-emerald-500 hover:bg-emerald-600 text-white font-heading text-lg py-3 rounded-2xl border-b-4 border-emerald-700' 
+                    : 'btn-kid w-full bg-amber-500 hover:bg-amber-600 text-white font-heading text-lg py-3 rounded-2xl border-b-4 border-amber-700';
+            }
+
+            if (modal) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+            }
+            if (card) {
+                card.classList.remove('scale-90');
+                card.classList.add('scale-100');
+            }
+
+            speakText(`${title}. ${explanation}`);
+        }
+
+        function closeFeedbackModal() {
+            playSound('click');
+            const modal = document.getElementById('feedback-modal');
+            const card = document.getElementById('feedback-card');
+            if (modal) {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }
+            if (card) {
+                card.classList.remove('scale-100');
+                card.classList.add('scale-90');
+            }
+
+            if (typeof state.pendingNextAction === 'function') {
+                const action = state.pendingNextAction;
+                state.pendingNextAction = null;
+                action();
+            }
+        }
+
+        function refreshCurrentLevelUI() {
+            const bmSubs = ['g1-sub-bm', 'g2-sub-bm', 'g3-title-bm', 'g4-sub-bm', 'g5-sub-bm', 'g1-clue-bm', 'g2-scenario-bm', 'g3-weather-label-bm', 'g3-explain-bm', 'g4-question-bm', 'g5-story-bm'];
+            bmSubs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (state.showBm) el.classList.remove('hidden');
+                    else el.classList.add('hidden');
+                }
+            });
+
+            if (state.currentLevel === 1) loadL1Question(false);
+            else if (state.currentLevel === 2) loadL2Question(false);
+            else if (state.currentLevel === 3) loadL3Question(false);
+            else if (state.currentLevel === 4) loadL4Question(false);
+            else if (state.currentLevel === 5) loadL5Question(false);
+        }
+
+        function showHint() {
+            playSound('click');
+            let hintEn = "Read the question carefully!";
+            let hintBm = "Baca soalan dengan teliti!";
+
+            if (state.currentLevel === 1) {
+                const q = L1_QUESTIONS[state.currentQuestionIndex];
+                hintEn = q.hintEn;
+                hintBm = q.hintBm;
+            } else if (state.currentLevel === 2) {
+                const q = L2_QUESTIONS[state.currentQuestionIndex];
+                hintEn = q.hintEn;
+                hintBm = q.hintBm;
+            } else if (state.currentLevel === 3) {
+                const q = L3_QUESTIONS[state.currentQuestionIndex];
+                hintEn = q.hintEn;
+                hintBm = q.hintBm;
+            } else if (state.currentLevel === 4) {
+                const q = L4_QUESTIONS[state.currentQuestionIndex];
+                hintEn = q.hintEn;
+                hintBm = q.hintBm;
+            } else if (state.currentLevel === 5) {
+                const q = L5_QUESTIONS[state.currentQuestionIndex];
+                hintEn = q.hintEn;
+                hintBm = q.hintBm;
+            }
+
+            document.getElementById('hint-text-en').innerText = hintEn;
+            document.getElementById('hint-text-bm').innerText = hintBm;
+
+            const modal = document.getElementById('hint-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+
+            speakText(`Hint: ${hintEn}`);
+        }
+
+        function closeHintModal() {
+            playSound('click');
+            const modal = document.getElementById('hint-modal');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        const L1_QUESTIONS = [
+            {
+                clue: "Dark clouds cover the sky. Strong winds are blowing and thunder is loud. Rain is falling hard.",
+                bmClue: "Awan gelap menutupi langit. Angin kencang bertiup dan guruh sangat kuat. Hujan turun dengan lebat.",
+                correct: "Stormy Weather 🌩️",
+                options: [
+                    { en: "Stormy Weather 🌩️", bm: "Cuaca Ribut 🌩️" },
+                    { en: "Sunny Weather ☀️", bm: "Cuaca Panas ☀️" },
+                    { en: "Windy Weather 🌬️", bm: "Cuaca Berangin 🌬️" },
+                    { en: "Cloudy Weather ☁️", bm: "Cuaca Berawan ☁️" }
+                ],
+                explanation: "Because dark clouds, loud thunder, and heavy rain mean there is a stormy weather!",
+                hintEn: "Listen for loud thunder and heavy rain!",
+                hintBm: "Dengar bunyi guruh yang kuat dan hujan lebat!"
+            },
+            {
+                clue: "The sky is bright blue and yellow sunshine fills the air. It is hot and dry outside.",
+                bmClue: "Langit biru cerah dan cahaya matahari kuning menerangi udara. Di luar panas dan kering.",
+                correct: "Sunny Weather ☀️",
+                options: [
+                    { en: "Rainy Weather 🌧️", bm: "Cuaca Hujan 🌧️" },
+                    { en: "Sunny Weather ☀️", bm: "Cuaca Panas ☀️" },
+                    { en: "Cold Weather ❄️", bm: "Cuaca Sejuk ❄️" },
+                    { en: "Stormy Weather 🌩️", bm: "Cuaca Ribut 🌩️" }
+                ],
+                explanation: "Because bright sunshine and blue sky mean it is sunny!",
+                hintEn: "Look for bright sunshine and blue sky!",
+                hintBm: "Cari cahaya matahari cerah dan langit biru!"
+            },
+            {
+                clue: "Leaves on the trees move fast. Paper flies in the air and your kite goes up very high.",
+                bmClue: "Daun-daun pada pokok bergerak pantas. Kertas terbang di udara dan wau anda naik sangat tinggi.",
+                correct: "Windy Weather 🌬️",
+                options: [
+                    { en: "Hot Weather ☀️", bm: "Cuaca Panas ☀️" },
+                    { en: "Rainy Weather 🌧️", bm: "Cuaca Hujan 🌧️" },
+                    { en: "Windy Weather 🌬️", bm: "Cuaca Berangin 🌬️" },
+                    { en: "Snowy Weather ❄️", bm: "Cuaca Salji ❄️" }
+                ],
+                explanation: "Because blowing leaves and flying kites show strong wind is blowing!",
+                hintEn: "What makes kites fly high in the air?",
+                hintBm: "Apakah yang membuatkan wau terbang tinggi di udara?"
+            }
+        ];
+
+        const L2_QUESTIONS = [
+            {
+                scenario: "You are walking to school. The sky is dark cloudy and rain is forecast soon. What should you bring?",
+                bmScenario: "Anda sedang berjalan ke sekolah. Langit berawan gelap dan hujan diramal tidak lama lagi. Apakah yang patut anda bawa?",
+                correct: "An umbrella to stay dry ☂️",
+                options: [
+                    { en: "Sunglasses for eyes 🕶️", bm: "Cermin mata hitam 🕶️" },
+                    { en: "An umbrella to stay dry ☂️", bm: "Payung untuk kekal kering ☂️" },
+                    { en: "A beach ball to play ⚽", bm: "Bola pantai untuk bermain ⚽" },
+                    { en: "A warm wool hat 🧶", bm: "Topi bulu yang hangat 🧶" }
+                ],
+                explanation: "If rain is coming, bringing an umbrella will keep your clothes dry!",
+                hintEn: "Pick an item that protects you from water when it rains!",
+                hintBm: "Pilih barang yang melindungi anda daripada air apabila hujan!"
+            },
+            {
+                scenario: "You go to the sunny beach. The sun light is very bright and hurts your eyes. What should you wear?",
+                bmScenario: "Anda pergi ke pantai yang cerah. Cahaya matahari sangat terang dan menyakitkan mata. Apakah yang patut anda pakai?",
+                correct: "Wear dark sunglasses 🕶️",
+                options: [
+                    { en: "Wear heavy rain boots 🥾", bm: "Kasut bot hujan 🥾" },
+                    { en: "Wear a thick raincoat 🧥", bm: "Baju hujan tebal 🧥" },
+                    { en: "Wear dark sunglasses 🕶️", bm: "Cermin mata hitam gelap 🕶️" },
+                    { en: "Wear a winter scarf 🧣", bm: "Selendang musim sejuk 🧣" }
+                ],
+                explanation: "Wearing sunglasses protects your eyes from bright bright sunshine!",
+                hintEn: "What protects your eyes from bright light?",
+                hintBm: "Apakah yang melindungi mata anda daripada cahaya terang?"
+            },
+            {
+                scenario: "Strong wind is blowing outside and your neck feels very cold. What is best to wear?",
+                bmScenario: "Angin kencang bertiup di luar dan leher anda rasa sangat sejuk. Pakaian apakah yang paling sesuai dipakai?",
+                correct: "A soft warm scarf 🧣",
+                options: [
+                    { en: "A soft warm scarf 🧣", bm: "Selendang lembut yang hangat 🧣" },
+                    { en: "Thin swimming shorts 🩳", bm: "Seluar pendek renang 🩳" },
+                    { en: "A sun visor cap 🧢", bm: "Topi visor matahari 🧢" },
+                    { en: "Plastic slippers 🩴", bm: "Selipar plastik 🩴" }
+                ],
+                explanation: "A scarf covers your neck so the cold wind cannot make you cold!",
+                hintEn: "Which item wraps around your neck to keep it warm?",
+                hintBm: "Barang manakah yang dibalut pada leher untuk memastikannya hangat?"
+            }
+        ];
+
+        const L3_QUESTIONS = [
+            {
+                weatherId: 'rainy',
+                weatherName: 'Rainy Day 🌧️',
+                bmWeatherName: 'Hari Hujan 🌧️',
+                icon: '🌧️',
+                clothes: [
+                    { id: 'raincoat', name: 'Raincoat & Boots 🧥🥾', bmName: 'Baju Hujan & Kasut Bot 🧥🥾', isCorrect: true },
+                    { id: 'sunglasses', name: 'Sunglasses & Shorts 🕶️🩳', bmName: 'Cermin Mata & Seluar Pendek 🕶️🩳', isCorrect: false },
+                    { id: 'vest', name: 'Singlet Shirt 🎽', bmName: 'Baju Singlet 🎽', isCorrect: false },
+                    { id: 'swimwear', name: 'Swimming Suit 🩱', bmName: 'Baju Renang 🩱', isCorrect: false }
+                ],
+                explainQuestion: "Why do we wear a raincoat and boots when it rains?",
+                bmExplainQuestion: "Mengapa kita memakai baju hujan dan kasut bot apabila hujan?",
+                explainOptions: [
+                    { text: "Because it stops rain water from making us wet.", bmText: "Kerana ia menghalang air hujan daripada membasahkan kita.", isCorrect: true },
+                    { text: "Because it makes us feel hot in the sun.", bmText: "Kerana ia membuatkan kita rasa panas di bawah matahari.", isCorrect: false },
+                    { text: "Because it helps us swim faster.", bmText: "Kerana ia membantu kita berenang lebih pantas.", isCorrect: false }
+                ],
+                explanation: "A raincoat and rubber boots keep water away so your clothes stay dry!",
+                hintEn: "Find clothes made of waterproof material!",
+                hintBm: "Cari pakaian yang diperbuat daripada bahan kalis air!"
+            },
+            {
+                weatherId: 'sunny',
+                weatherName: 'Sunny Day ☀️',
+                bmWeatherName: 'Hari Panas ☀️',
+                icon: '☀️',
+                clothes: [
+                    { id: 'tshirt_cap', name: 'Cotton T-Shirt & Sun Cap 👕🧢', bmName: 'Baju T Kapas & Topi Sun 👕🧢', isCorrect: true },
+                    { id: 'heavy_jacket', name: 'Thick Wool Sweater 🧥', bmName: 'Baju Sejuk Bulu Tebal 🧥', isCorrect: false },
+                    { id: 'plastic_raincoat', name: 'Heavy Raincoat 🧥', bmName: 'Baju Hujan Tebal 🧥', isCorrect: false },
+                    { id: 'earmuffs', name: 'Winter Earmuffs 🎧', bmName: 'Penutup Telinga Musim Sejuk 🎧', isCorrect: false }
+                ],
+                explainQuestion: "Why do we wear a light T-shirt and sun cap on a sunny day?",
+                bmExplainQuestion: "Mengapa kita memakai baju T kapas dan topi pada hari cerah?",
+                explainOptions: [
+                    { text: "Because it keeps us cool and shades our head from sun heat.", bmText: "Kerana ia kekal sejuk dan meneduhkan kepala daripada panas.", isCorrect: true },
+                    { text: "Because it protects us from heavy thunder.", bmText: "Kerana ia melindungi kita daripada guruh yang kuat.", isCorrect: false },
+                    { text: "Because it helps us stay warm in snow.", bmText: "Kerana ia membantu kita kekal hangat dalam salji.", isCorrect: false }
+                ],
+                explanation: "Light cotton shirts let air cool your body, and a cap shields your eyes!",
+                hintEn: "Pick light clothing suitable for hot sunny days!",
+                hintBm: "Pilih pakaian ringan yang sesuai untuk hari panas!"
+            },
+            {
+                weatherId: 'cold',
+                weatherName: 'Cold Weather ❄️',
+                bmWeatherName: 'Cuaca Sejuk ❄️',
+                icon: '❄️',
+                clothes: [
+                    { id: 'jacket_scarf', name: 'Thick Jacket & Scarf 🧥🧣', bmName: 'Jaket Tebal & Selendang 🧥🧣', isCorrect: true },
+                    { id: 'shorts_flipflops', name: 'Shorts & Slippers 🩳🩴', bmName: 'Seluar Pendek & Selipar 🩳🩴', isCorrect: false },
+                    { id: 'umbrella_only', name: 'Umbrella ☂️', bmName: 'Payung ☂️', isCorrect: false },
+                    { id: 'sun_glasses', name: 'Sunglasses 🕶️', bmName: 'Cermin Mata Hitam 🕶️', isCorrect: false }
+                ],
+                explainQuestion: "Why do we wear a thick jacket when it is cold?",
+                bmExplainQuestion: "Mengapa kita memakai jaket tebal apabila sejuk?",
+                explainOptions: [
+                    { text: "Because it traps body warmth so we do not shiver.", bmText: "Kerana ia memerangkap haba badan supaya kita tidak menggigil.", isCorrect: true },
+                    { text: "Because it keeps rain off our head.", bmText: "Kerana ia memelihara kepala daripada hujan.", isCorrect: false },
+                    { text: "Because it makes us run fast.", bmText: "Kerana ia membuatkan kita berlari pantas.", isCorrect: false }
+                ],
+                explanation: "Thick jackets trap warm air next to your body so you stay cozy!",
+                hintEn: "Choose thick clothing that traps body heat!",
+                hintBm: "Pilih pakaian tebal yang memerangkap haba badan!"
+            }
+        ];
+
+        const L4_FORECAST = [
+            { en: "🌅 Morning: Heavy rain with loud thunder in Kuala Lumpur.", bm: "🌅 Pagi: Hujan lebat disertai guruh kuat di Kuala Lumpur." },
+            { en: "🌤️ Afternoon: Rain stops. Sky is cloudy but warm.", bm: "🌤️ Tengah hari: Hujan berhenti. Langit berawan tetapi hangat." },
+            { en: "🌇 Evening: Clear blue sky with gentle cool breeze.", bm: "🌇 Petang: Langit biru cerah dengan angin sepoi-sepoi bahasa." }
+        ];
+
+        const L4_QUESTIONS = [
+            {
+                question: "What is the weather in Kuala Lumpur in the MORNING?",
+                bmQuestion: "Apakah cuaca di Kuala Lumpur pada WAKTU PAGI?",
+                options: [
+                    { en: "Heavy rain with loud thunder ⛈️", bm: "Hujan lebat disertai guruh ⛈️" },
+                    { en: "Clear blue sky with breeze 🍃", bm: "Langit biru cerah berangin 🍃" },
+                    { en: "Hot and sunny dry air ☀️", bm: "Udara kering panas terik ☀️" },
+                    { en: "Snow falling from sky ❄️", bm: "Salji turun dari langit ❄️" }
+                ],
+                correct: "Heavy rain with loud thunder ⛈️",
+                explanation: "The morning forecast explicitly says: Heavy rain with loud thunder!",
+                hintEn: "Look at the morning (🌅) row in the forecast!",
+                hintBm: "Lihat pada baris pagi (🌅) dalam ramalan cuaca!"
+            },
+            {
+                question: "If you want to play outdoor games in the sunshine, when is the best time?",
+                bmQuestion: "Jika anda mahu bermain permainan luar, bilakah waktu paling sesuai?",
+                options: [
+                    { en: "In the Morning 🌅", bm: "Pada Waktu Pagi 🌅" },
+                    { en: "In the Evening 🌇", bm: "Pada Waktu Petang 🌇" },
+                    { en: "At Midnight 🌙", bm: "Pada Tengah Malam 🌙" },
+                    { en: "Never ❌", bm: "Tidak Pernah ❌" }
+                ],
+                correct: "In the Evening 🌇",
+                explanation: "Because in the evening, the sky is clear blue with a gentle breeze!",
+                hintEn: "Find the time of day with clear sky and no rain!",
+                hintBm: "Cari waktu yang langit cerah dan tiada hujan!"
+            },
+            {
+                question: "What happens in the AFTERNOON according to the report?",
+                bmQuestion: "Apakah yang berlaku pada WAKTU TENGAH HARI mengikut laporan?",
+                options: [
+                    { en: "The rain stops and it is cloudy 🌤️", bm: "Hujan berhenti dan langit berawan 🌤️" },
+                    { en: "Heavy storm begins 🌩️", bm: "Ribut lebat bermula 🌩️" },
+                    { en: "Strong snow storm ❄️", bm: "Ribut salji kuat ❄️" },
+                    { en: "Flooding everywhere 🌊", bm: "Banjir di mana-mana 🌊" }
+                ],
+                correct: "The rain stops and it is cloudy 🌤️",
+                explanation: "The forecast states that in the afternoon the rain stops and sky is cloudy!",
+                hintEn: "Look at the afternoon (🌤️) line in the bulletin!",
+                hintBm: "Lihat pada baris tengah hari (🌤️) dalam buletin!"
+            }
+        ];
+
+        const L5_QUESTIONS = [
+            {
+                story: "It is raining heavily outside. Ali puts on his dark sunglasses and goes to swim in the outdoor pool.",
+                bmStory: "Hujan turun dengan lebat di luar. Ali memakai cermin mata hitamnya dan pergi berenang di kolam luar.",
+                question: "What is the silly mistake Ali made?",
+                bmQuestion: "Apakah kesilapan kelakar yang dibuat oleh Ali?",
+                options: [
+                    { en: "Swimming outside in sunglasses during heavy rain 🌧️", bm: "Berenang di luar memakai cermin mata semasa hujan lebat 🌧️" },
+                    { en: "Wearing shoes inside house 👟", bm: "Memakai kasut di dalam rumah 👟" },
+                    { en: "Reading a book at school 📚", bm: "Membaca buku di sekolah 📚" },
+                    { en: "Drinking warm water 🥛", bm: "Minum air suam 🥛" }
+                ],
+                correct: "Swimming outside in sunglasses during heavy rain 🌧️",
+                explanation: "Wearing sunglasses and swimming outside during heavy rain is unsafe and unnecessary!",
+                hintEn: "Is it safe or reasonable to swim outside in dark sunglasses during rain?",
+                hintBm: "Adakah selamat atau munasabah berenang di luar dengan cermin mata semasa hujan?"
+            },
+            {
+                story: "It is a cold and windy morning. Mei Ling puts on thin shorts and a singlet to stay warm.",
+                bmStory: "Pagi ini sejuk dan berangin. Mei Ling memakai seluar pendek nipis dan baju singlet untuk kekal hangat.",
+                question: "What is wrong with Mei Ling's choice?",
+                bmQuestion: "Apakah yang tidak kena dengan pilihan Mei Ling?",
+                options: [
+                    { en: "Thin shorts and singlet will NOT keep her warm in cold wind 🥶", bm: "Seluar pendek nipis dan singlet TIDAK akan memanaskannya dalam angin sejuk 🥶" },
+                    { en: "She is eating healthy rice 🍚", bm: "Dia makan nasi sihat 🍚" },
+                    { en: "She carries her school bag 🎒", bm: "Dia membawa beg sekolah 🎒" },
+                    { en: "She drinks cold milk 🥛", bm: "Dia minum susu sejuk 🥛" }
+                ],
+                correct: "Thin shorts and singlet will NOT keep her warm in cold wind 🥶",
+                explanation: "Thin shorts and singlets leave skin bare, so she should wear a sweater!",
+                hintEn: "Does a singlet shirt keep your arms and body warm in cold wind?",
+                hintBm: "Adakah baju singlet memanaskan tangan dan badan dalam angin sejuk?"
+            },
+            {
+                story: "A dangerous thunderstorm has lightning. Ben runs under a tall tree in an open field to stay safe.",
+                bmStory: "Ribut petir yang berbahaya membawa kilat. Ben berlari di bawah pokok tinggi di padang terbuka untuk kekal selamat.",
+                question: "Why is Ben's action mistaken and dangerous?",
+                bmQuestion: "Mengapa tindakan Ben salah dan berbahaya?",
+                options: [
+                    { en: "Standing under tall trees in open fields during lightning is dangerous! ⚡", bm: "Berdiri di bawah pokok tinggi di padang semasa kilat adalah berbahaya! ⚡" },
+                    { en: "Ben is wearing blue socks 🧦", bm: "Ben memakai stoking biru 🧦" },
+                    { en: "Ben likes playing soccer ⚽", bm: "Ben suka bermain bola sepak ⚽" },
+                    { en: "Ben is wearing sports shoes 👟", bm: "Ben memakai kasut sukan 👟" }
+                ],
+                correct: "Standing under tall trees in open fields during lightning is dangerous! ⚡",
+                explanation: "Lightning strikes tall trees! You should stay inside a safe building during storms!",
+                hintEn: "Where does lightning usually strike in an open field?",
+                hintBm: "Di manakah kilat biasanya menyambar di padang terbuka?"
+            }
+        ];
+
+        function initLevel1() {
+            state.currentLevel = 1;
+            state.currentQuestionIndex = 0;
+            state.isFirstAttempt = true;
+            showScreen('screen-game-1');
+            updateProgressUI();
+            loadL1Question(true);
+        }
+
+        function loadL1Question(autoSpeak = true) {
+            state.isFirstAttempt = true;
+            updateProgressUI();
+            const q = L1_QUESTIONS[state.currentQuestionIndex];
+            document.getElementById('g1-qnum').innerText = `${state.currentQuestionIndex + 1}/3`;
+            document.getElementById('g1-clue-text').innerText = `"${q.clue}"`;
+
+            const bmEl = document.getElementById('g1-clue-bm');
+            bmEl.innerText = `"${q.bmClue}"`;
+            if (state.showBm) bmEl.classList.remove('hidden');
+            else bmEl.classList.add('hidden');
+
+            if (autoSpeak) {
+                speakText(`Level 1. Question ${state.currentQuestionIndex + 1}. ${q.clue}`);
+            }
+
+            const container = document.getElementById('g1-options-container');
+            container.innerHTML = '';
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid card-selectable bg-white p-3.5 rounded-2xl font-heading text-sm md:text-base text-slate-800 text-left flex items-center justify-between shadow hover:bg-sky-50`;
+                btn.innerHTML = `
+                    <div class="flex-grow pr-2">
+                        <span>${opt.en}</span>
+                        <div class="text-xs text-indigo-700 font-sans italic font-medium ${state.showBm ? '' : 'hidden'}">${opt.bm}</div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button type="button" onclick="event.stopPropagation(); speakText('${opt.en}')" class="w-8 h-8 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-700 flex items-center justify-center text-xs" title="Listen Option">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                `;
+                btn.onclick = () => checkL1Answer(opt.en, q, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function speakCurrentClue() {
+            const q = L1_QUESTIONS[state.currentQuestionIndex];
+            speakText(q.clue);
+        }
+
+        function checkL1Answer(selected, qObj, btnEl) {
+            if (selected === qObj.correct) {
+                btnEl.classList.add('card-correct');
+                if (state.isFirstAttempt) {
+                    addStars(2);
+                    state.levelScores[1]++;
+                    state.firstTryCorrectCount++;
+                }
+
+                showFeedback(
+                    true,
+                    "Correct Detective! ⭐",
+                    qObj.explanation,
+                    () => {
+                        state.currentQuestionIndex++;
+                        if (state.currentQuestionIndex < 3) {
+                            loadL1Question(true);
+                        } else {
+                            initLevel2();
+                        }
+                    }
+                );
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Not Quite Right!",
+                    `Look closely at the clue word. ${qObj.explanation}`,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function initLevel2() {
+            state.currentLevel = 2;
+            state.currentQuestionIndex = 0;
+            state.isFirstAttempt = true;
+            showScreen('screen-game-2');
+            updateProgressUI();
+            loadL2Question(true);
+        }
+
+        function loadL2Question(autoSpeak = true) {
+            state.isFirstAttempt = true;
+            updateProgressUI();
+            const q = L2_QUESTIONS[state.currentQuestionIndex];
+            document.getElementById('g2-qnum').innerText = `${state.currentQuestionIndex + 1}/3`;
+            document.getElementById('g2-scenario-text').innerText = q.scenario;
+
+            const bmEl = document.getElementById('g2-scenario-bm');
+            bmEl.innerText = q.bmScenario;
+            if (state.showBm) bmEl.classList.remove('hidden');
+            else bmEl.classList.add('hidden');
+
+            if (autoSpeak) {
+                speakText(`Level 2. Question ${state.currentQuestionIndex + 1}. ${q.scenario}`);
+            }
+
+            const container = document.getElementById('g2-options-container');
+            container.innerHTML = '';
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid card-selectable bg-white p-3.5 rounded-2xl font-heading text-xs md:text-sm text-slate-800 text-left flex items-center justify-between shadow hover:bg-sky-50`;
+                btn.innerHTML = `
+                    <div class="flex-grow pr-2">
+                        <span>${opt.en}</span>
+                        <div class="text-xs text-indigo-700 font-sans italic font-medium ${state.showBm ? '' : 'hidden'}">${opt.bm}</div>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); speakText('${opt.en}')" class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-800 flex items-center justify-center text-xs" title="Listen Option">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                btn.onclick = () => checkL2Answer(opt.en, q, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function speakCurrentScenario() {
+            const q = L2_QUESTIONS[state.currentQuestionIndex];
+            speakText(q.scenario);
+        }
+
+        function checkL2Answer(selected, qObj, btnEl) {
+            if (selected === qObj.correct) {
+                btnEl.classList.add('card-correct');
+                if (state.isFirstAttempt) {
+                    addStars(2);
+                    state.levelScores[2]++;
+                    state.firstTryCorrectCount++;
+                }
+
+                showFeedback(
+                    true,
+                    "Smart Choice! ⭐",
+                    qObj.explanation,
+                    () => {
+                        state.currentQuestionIndex++;
+                        if (state.currentQuestionIndex < 3) {
+                            loadL2Question(true);
+                        } else {
+                            initLevel3();
+                        }
+                    }
+                );
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Think Again!",
+                    qObj.explanation,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function initLevel3() {
+            state.currentLevel = 3;
+            state.currentQuestionIndex = 0;
+            state.isFirstAttempt = true;
+            showScreen('screen-game-3');
+            updateProgressUI();
+            loadL3Question(true);
+        }
+
+        function loadL3Question(autoSpeak = true) {
+            state.isFirstAttempt = true;
+            updateProgressUI();
+            const q = L3_QUESTIONS[state.currentQuestionIndex];
+
+            document.getElementById('g3-title').innerText = `Dress for ${q.weatherName}`;
+            
+            const titleBmEl = document.getElementById('g3-title-bm');
+            if (state.showBm) titleBmEl.classList.remove('hidden');
+            else titleBmEl.classList.add('hidden');
+
+            document.getElementById('g3-weather-icon').innerText = q.icon;
+            document.getElementById('g3-weather-label').innerText = q.weatherName;
+            
+            const weatherBmLabel = document.getElementById('g3-weather-label-bm');
+            weatherBmLabel.innerText = q.bmWeatherName;
+            if (state.showBm) weatherBmLabel.classList.remove('hidden');
+            else weatherBmLabel.classList.add('hidden');
+
+            document.getElementById('g3-chosen-items').innerHTML = `<span class="text-slate-300">❓</span>`;
+
+            document.getElementById('g3-step-dress').classList.remove('hidden');
+            document.getElementById('g3-step-explain').classList.add('hidden');
+
+            if (autoSpeak) {
+                speakText(`Level 3. Choose suitable clothes for ${q.weatherName}`);
+            }
+
+            const grid = document.getElementById('g3-clothes-grid');
+            grid.innerHTML = '';
+
+            const shuffled = [...q.clothes].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid card-selectable bg-white p-3 rounded-2xl font-heading text-xs md:text-sm text-slate-800 text-center shadow flex flex-col items-center justify-center gap-1`;
+                btn.innerHTML = `
+                    <span>${c.name}</span>
+                    <span class="text-xs font-sans text-indigo-700 italic font-medium ${state.showBm ? '' : 'hidden'}">${c.bmName}</span>
+                    <button type="button" onclick="event.stopPropagation(); speakText('${c.name}')" class="mt-1 text-xs text-sky-600 hover:text-sky-800 bg-sky-50 px-2 py-0.5 rounded-full">
+                        <i class="fa-solid fa-volume-high"></i> Listen
+                    </button>
+                `;
+                btn.onclick = () => selectL3Clothes(c, q, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectL3Clothes(item, qObj, btnEl) {
+            if (item.isCorrect) {
+                btnEl.classList.add('card-correct');
+                document.getElementById('g3-chosen-items').innerHTML = `<span class="text-emerald-700 font-bold text-sm">${item.name}</span>`;
+                
+                setTimeout(() => {
+                    document.getElementById('g3-step-dress').classList.add('hidden');
+                    document.getElementById('g3-step-explain').classList.remove('hidden');
+                    loadL3Explanation(qObj);
+                }, 600);
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Not Suitable!",
+                    `That outfit is not ideal for ${qObj.weatherName}. Pick an outfit designed for this weather!`,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function loadL3Explanation(qObj) {
+            document.getElementById('g3-explain-question').innerText = qObj.explainQuestion;
+            
+            const bmQuestionEl = document.getElementById('g3-explain-bm');
+            bmQuestionEl.innerText = qObj.bmExplainQuestion;
+            if (state.showBm) bmQuestionEl.classList.remove('hidden');
+            else bmQuestionEl.classList.add('hidden');
+
+            speakText(qObj.explainQuestion);
+
+            const container = document.getElementById('g3-explain-options');
+            container.innerHTML = '';
+
+            const shuffled = [...qObj.explainOptions].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid bg-white border-2 border-emerald-300 p-3 rounded-xl font-heading text-xs md:text-sm text-slate-800 text-left hover:bg-emerald-100 shadow flex items-center justify-between gap-2`;
+                btn.innerHTML = `
+                    <div class="flex-grow">
+                        <div>${opt.text}</div>
+                        <div class="text-xs font-sans text-indigo-700 italic font-medium ${state.showBm ? '' : 'hidden'}">${opt.bmText}</div>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); speakText('${opt.text}')" class="w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 flex items-center justify-center text-xs flex-shrink-0" title="Listen Option">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                btn.onclick = () => checkL3Explanation(opt, qObj, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkL3Explanation(opt, qObj, btnEl) {
+            if (opt.isCorrect) {
+                btnEl.classList.add('card-correct');
+                if (state.isFirstAttempt) {
+                    addStars(2);
+                    state.levelScores[3]++;
+                    state.firstTryCorrectCount++;
+                }
+
+                showFeedback(
+                    true,
+                    "Well Explained! ⭐",
+                    qObj.explanation,
+                    () => {
+                        state.currentQuestionIndex++;
+                        if (state.currentQuestionIndex < 3) {
+                            loadL3Question(true);
+                        } else {
+                            initLevel4();
+                        }
+                    }
+                );
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Try Another Reason!",
+                    qObj.explanation,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function initLevel4() {
+            state.currentLevel = 4;
+            state.currentQuestionIndex = 0;
+            state.isFirstAttempt = true;
+            showScreen('screen-game-4');
+            updateProgressUI();
+            loadL4Question(true);
+        }
+
+        function loadL4Question(autoSpeak = true) {
+            state.isFirstAttempt = true;
+            updateProgressUI();
+
+            const bulletin = document.getElementById('g4-forecast-body');
+            bulletin.innerHTML = L4_FORECAST.map(line => `
+                <div class="border-b border-sky-100 pb-1">
+                    <p class="font-semibold">${line.en}</p>
+                    <p class="text-xs text-indigo-700 italic font-sans ${state.showBm ? '' : 'hidden'}">${line.bm}</p>
+                </div>
+            `).join('');
+
+            const q = L4_QUESTIONS[state.currentQuestionIndex];
+            document.getElementById('g4-qnum').innerText = `${state.currentQuestionIndex + 1}/3`;
+            document.getElementById('g4-question-text').innerText = q.question;
+
+            const bmQuestionEl = document.getElementById('g4-question-bm');
+            bmQuestionEl.innerText = q.bmQuestion;
+            if (state.showBm) bmQuestionEl.classList.remove('hidden');
+            else bmQuestionEl.classList.add('hidden');
+
+            if (autoSpeak) {
+                speakText(`Level 4. Question ${state.currentQuestionIndex + 1}. ${q.question}`);
+            }
+
+            const container = document.getElementById('g4-options-container');
+            container.innerHTML = '';
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid card-selectable bg-white p-3.5 rounded-2xl font-heading text-xs md:text-sm text-slate-800 text-left flex items-center justify-between shadow hover:bg-sky-50`;
+                btn.innerHTML = `
+                    <div class="flex-grow pr-2">
+                        <span>${opt.en}</span>
+                        <div class="text-xs text-indigo-700 font-sans italic font-medium ${state.showBm ? '' : 'hidden'}">${opt.bm}</div>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); speakText('${opt.en}')" class="w-8 h-8 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-800 flex items-center justify-center text-xs flex-shrink-0" title="Listen Option">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                btn.onclick = () => checkL4Answer(opt.en, q, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function speakForecastReport() {
+            speakText("Malaysia Daily Forecast. Morning: Heavy rain with loud thunder in Kuala Lumpur. Afternoon: Rain stops. Sky is cloudy but warm. Evening: Clear blue sky with gentle cool breeze.");
+        }
+
+        function checkL4Answer(selected, qObj, btnEl) {
+            if (selected === qObj.correct) {
+                btnEl.classList.add('card-correct');
+                if (state.isFirstAttempt) {
+                    addStars(2);
+                    state.levelScores[4]++;
+                    state.firstTryCorrectCount++;
+                }
+
+                showFeedback(
+                    true,
+                    "Forecast Master! ⭐",
+                    qObj.explanation,
+                    () => {
+                        state.currentQuestionIndex++;
+                        if (state.currentQuestionIndex < 3) {
+                            loadL4Question(true);
+                        } else {
+                            initLevel5();
+                        }
+                    }
+                );
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Re-read Forecast!",
+                    qObj.explanation,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function initLevel5() {
+            state.currentLevel = 5;
+            state.currentQuestionIndex = 0;
+            state.isFirstAttempt = true;
+            showScreen('screen-game-5');
+            updateProgressUI();
+            loadL5Question(true);
+        }
+
+        function loadL5Question(autoSpeak = true) {
+            state.isFirstAttempt = true;
+            updateProgressUI();
+            const q = L5_QUESTIONS[state.currentQuestionIndex];
+            document.getElementById('g5-qnum').innerText = `${state.currentQuestionIndex + 1}/3`;
+            document.getElementById('g5-story-text').innerText = `"${q.story}"`;
+
+            const bmStoryEl = document.getElementById('g5-story-bm');
+            bmStoryEl.innerText = `"${q.bmStory}"`;
+            if (state.showBm) bmStoryEl.classList.remove('hidden');
+            else bmStoryEl.classList.add('hidden');
+
+            if (autoSpeak) {
+                speakText(`Level 5. Story ${state.currentQuestionIndex + 1}. ${q.story}`);
+            }
+
+            const container = document.getElementById('g5-options-container');
+            container.innerHTML = '';
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-kid card-selectable bg-white p-3.5 rounded-2xl font-heading text-xs md:text-sm text-slate-800 text-left flex items-center justify-between shadow hover:bg-rose-50`;
+                btn.innerHTML = `
+                    <div class="flex-grow pr-2">
+                        <span>${opt.en}</span>
+                        <div class="text-xs text-indigo-700 font-sans italic font-medium ${state.showBm ? '' : 'hidden'}">${opt.bm}</div>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); speakText('${opt.en}')" class="w-8 h-8 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-800 flex items-center justify-center text-xs flex-shrink-0" title="Listen Option">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                btn.onclick = () => checkL5Answer(opt.en, q, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function speakCurrentStory() {
+            const q = L5_QUESTIONS[state.currentQuestionIndex];
+            speakText(q.story);
+        }
+
+        function checkL5Answer(selected, qObj, btnEl) {
+            if (selected === qObj.correct) {
+                btnEl.classList.add('card-correct');
+                if (state.isFirstAttempt) {
+                    addStars(2);
+                    state.levelScores[5]++;
+                    state.firstTryCorrectCount++;
+                }
+
+                showFeedback(
+                    true,
+                    "Eagle Eye! You Found It! ⭐",
+                    qObj.explanation,
+                    () => {
+                        state.currentQuestionIndex++;
+                        if (state.currentQuestionIndex < 3) {
+                            loadL5Question(true);
+                        } else {
+                            showCelebrationScreen();
+                        }
+                    }
+                );
+            } else {
+                btnEl.classList.add('card-wrong');
+                state.isFirstAttempt = false;
+                showFeedback(
+                    false,
+                    "Look for the Mistake!",
+                    qObj.explanation,
+                    () => {
+                        btnEl.classList.remove('card-wrong');
+                    }
+                );
+            }
+        }
+
+        function showCelebrationScreen() {
+            showScreen('screen-celebration');
+            playSound('fanfare');
+
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('rep-stars').innerText = state.stars;
+
+            let acc = Math.round((state.firstTryCorrectCount / 15) * 100);
+            document.getElementById('rep-accuracy').innerText = `${acc}%`;
+
+            document.getElementById('rep-l1').innerText = `${state.levelScores[1]}/3 Correct`;
+            document.getElementById('rep-l2').innerText = `${state.levelScores[2]}/3 Correct`;
+            document.getElementById('rep-l3').innerText = `${state.levelScores[3]}/3 Correct`;
+            document.getElementById('rep-l4').innerText = `${state.levelScores[4]}/3 Correct`;
+            document.getElementById('rep-l5').innerText = `${state.levelScores[5]}/3 Correct`;
+
+            speakText(`Tahniah! Excellent Job! You earned ${state.stars} stars with ${acc} percent first try accuracy! You are a certified Weather Master!`);
+
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3 + 2,
+                    vx: Math.random() * 2 - 1
+                });
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+
+                if (!document.getElementById('screen-celebration').classList.contains('hidden')) {
+                    requestAnimationFrame(render);
+                }
+            }
+
+            render();
+        }
+
+        function restartGame() {
+            playSound('click');
+            showScreen('screen-start');
+            document.getElementById('progress-bar').style.width = '0%';
+        }
+
+        window.onload = function() {
+            console.log("Weather Adventure Intermediate Level Ready!");
+        };
+    </script>
+</body>
+</html>
